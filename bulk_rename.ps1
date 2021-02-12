@@ -1,6 +1,10 @@
 # 麻将脸打包重命名脚本
 # 需要PowerShell 7以上运行
-# 若需查询debug信息，运行脚本前加入 -debug 参数
+
+# 关于debug
+# powershell的debug需要设置环境变量
+# $DebugPreference = "Continue"
+# $ErrorActionPreference = "Stop"
 
 # 命令行参数
 # rootpath 是脚本操作的基础目录，默认为和类别文件夹同级的脚本所在目录，可修改
@@ -13,7 +17,8 @@ param (
 # Write-Debug "rootpath is: $($rootpath)"
 # Write-Debug "destpath is: $($destpath)"
 
-# 只复制打包包含的文件夹
+# 复制文件，只复制几个打包需要的文件夹
+
 $folders = "animal", "bundam", "carton", "device", "face", "goose"
 
 # 绕开“如果目标文件夹已存在，则copy-item会报错”
@@ -27,15 +32,7 @@ if (-not (Test-Path $destpath)) {
     }
 }
 
-# 类别和表中typeid的对应关系
-$typeid = @{
-    "animal" = 1468;
-    "bundam" = 1471;
-    "carton" = 1467;
-    "device" = 1469;
-    "face"   = 1465;
-    "goose"  = 1470;
-}
+# 重命名文件，规范要求文件只保留序号的三个数字，不保留后缀和首个类别字母
 
 # $result = Get-ChildItem -Path $(Join-Path $destpath "animal") -Name
 # Write-Debug $result[0].GetType()
@@ -92,3 +89,18 @@ foreach ($foldername in $folders) {
         }
     }
 }
+
+# 将文件名和新的排序写入新表格中
+
+# 类别和表中typeid的对应关系
+$typeid = @{
+    "animal" = 1468;
+    "bundam" = 1471;
+    "carton" = 1467;
+    "device" = 1469;
+    "face"   = 1465;
+    "goose"  = 1470;
+}
+
+# 打包文件夹
+
