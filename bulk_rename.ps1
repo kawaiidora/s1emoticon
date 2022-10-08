@@ -123,21 +123,31 @@ function GetIconInfoFromCsv {
     $Icons = New-Object -TypeName "System.Collections.ArrayList"
     foreach ($item in $csv) {
         $temp = New-Object EmojiIcon    
-        $temp.csvid = $item.id
-        $temp.csvtypeid = $item.typeid
-        $temp.csvdisplayord = $item.displarord
-        $temp.csvtype = $item.type
-        $temp.csvcode = $item.code
-        $temp.csvurl = $item.url
+        $temp.id = $item.id
+        $temp.typeid = $item.typeid
+        $temp.displayord = $item.displayord
+        $temp.type = $item.type
+        $temp.code = $item.code
+        $temp.url = $item.url
         $Icons.Add($temp)
     }
 
     return $Icons
 }
 
-# 脚本开始执行的代码段，等效于python的if(__name__ == '__main__')
+# 脚本只在被直接执行时，而不是被导入时开始执行
+# 等效于python的if(__name__ == '__main__')
 if ($MyInvocation.CommandOrigin -eq "Runspace") {
-    $csv = Import-Csv -Path $(Join-Path $rootpath $csvfilename) -Encoding oem
+    $csvPath = Join-Path $rootpath $csvfilename
+    # 读取csv
+    $csv = Import-Csv -Path $csvPath -Encoding oem
     $Icons = GetIconInfoFromCsv($csv)
-    $Icons | Export-Csv -Path ./output.csv -Encoding oem
+    # 从处理前的文件读取新增表情，顺道复制并重命名
+
+    # 补全、排序表情信息
+
+    #输出
+    $outputCsvPath = Join-Path $destpath $csvfilename
+    $Icons | Export-Csv -Path $outputCsvPath -Encoding oem
 }
+
