@@ -18,7 +18,7 @@ Write-Debug "rootpath is: $($rootpath)"
 Write-Debug "destpath is: $($destpath)"
 
 # 复制文件，只复制几个打包需要的文件夹
-$folders = "animal", "bundam", "carton", "device", "face", "goose"
+$types = "animal", "bundam", "carton", "device", "face", "goose"
 $csvfilename = "cdb_common_smiley.csv"
 
 # # 绕开“如果目标文件夹已存在，则copy-item会报错”
@@ -90,48 +90,54 @@ $csvfilename = "cdb_common_smiley.csv"
 #     }
 # }
 # 
-# # 将文件名和新的排序写入新表格中
-# 
-# # 类别和表中typeid的对应关系
-# $typeid = @{
-#     "animal" = 1468;
-#     "bundam" = 1471;
-#     "carton" = 1467;
-#     "device" = 1469;
-#     "face"   = 1465;
-#     "goose"  = 1470;
-# }
-# 
-# # 打包文件夹
 
-$origin = Import-Csv -Path $(Join-Path $rootpath $csvfilename) -Encoding oem
+# # 类别和表中typeid的对应关系
+$typesToTypeId= @{
+    "animal" = 1468;
+    "bundam" = 1471;
+    "carton" = 1467;
+    "device" = 1469;
+    "face"   = 1465;
+    "goose"  = 1470;
+}
+
+
 
 class EmojiIcon {
     # 有csv前缀的是表格自带属性
-    [int]$csvid
-    [int]$csvtypeid
-    [string]$csvdisplayord
-    [string]$csvtype
-    [string]$csvcode
-    [string]$csvurl = ""
+    [int]$id
+    [int]$typeid
+    [string]$displayord
+    [string]$type
+    [string]$code
+    [string]$url = ""
     # sourcefilepath是与导入的表情图的路径
     [string]$sourcefilepath = ""
 }
 
-$Icons = New-Object -TypeName "System.Collections.ArrayList"
 
-foreach ($item in $origin) {
-    $temp = New-Object EmojiIcon    
-    $temp.csvid = $item.id
-    $temp.csvtypeid = $item.typeid
-    $temp.csvdisplayord = $item.displarord
-    $temp.csvtype = $item.type
-    $temp.csvcode = $item.code
-    $temp.csvurl = $item.url
-    $Icons.Add($temp)
+function GetIconInfoFromCsv {
+    param(
+        $csv
+    )
+    $Icons = New-Object -TypeName "System.Collections.ArrayList"
+    foreach ($item in $csv) {
+        $temp = New-Object EmojiIcon    
+        $temp.csvid = $item.id
+        $temp.csvtypeid = $item.typeid
+        $temp.csvdisplayord = $item.displarord
+        $temp.csvtype = $item.type
+        $temp.csvcode = $item.code
+        $temp.csvurl = $item.url
+        $Icons.Add($temp)
+    }
+
+    return $Icons
 }
 
-$Icons | Export-Csv -Path ./output.csv -Encoding oem
-
-
-
+# 脚本开始执行的代码段，等效于python的if(__name__ == '__main__')
+if ($MyInvocation.CommandOrigin -eq "Runspace") {
+    $csv = Import-Csv -Path $(Join-Path $rootpath $csvfilename) -Encoding oem
+    $Icons = GetIconInfoFromCsv($csv)
+    $Icons | Export-Csv -Path ./output.csv -Encoding oem
+}
