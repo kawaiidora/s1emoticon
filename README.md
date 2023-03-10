@@ -2,6 +2,9 @@
 
 作为[S1论坛](https://bbs.saraba1st.com/)的麻将脸（特色表情）讨论和增减新表情的地方。
 
+## 最新下载地址
+[https://github.com/kawaiidora/s1emoticon/releases/latest](https://github.com/kawaiidora/s1emoticon/releases/latest)
+
 ## 分类
 
 论坛和应用对应：
@@ -31,13 +34,12 @@
 |--|------|------------|----|----|---|
 |不重复自增ID|type的标识符|论坛用显示序号|麻将脸都是smiley|文件对应的ASCII代码|对应文件标识符|
 
-### bulk_rename.ps1
+### automatic.py
 
-一键复制重命名打包脚本（未完成），运行需要PowerShell 7
+一键复制重命名打包脚本（未完成），运行需要Python 3.8.6或更高版本 (为了在win7上能运行）
 
-- [x] 一键复制需打包的文件 
-- [x] 一键重命名复制出的文件满足论坛和App格式要求 
-- [ ] 一键生成新的displayorder
-- [ ] 一键打包
-
-打包后所有文件都只能留三个数字
+- [x] 读取数据表 
+- [ ] 从文件目录读取文件名和排序等信息，新文件添加新的项目 
+- [ ] 根据文件名排序信息重新排序
+- [ ] 输出更新后数据表
+- [ ] 输出更新后文件，含增补包
